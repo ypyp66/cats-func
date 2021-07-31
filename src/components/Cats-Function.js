@@ -5,61 +5,46 @@ import HeaderButtonGroupFunction from "./HeaderButtonGroup-Function";
 import LoadingIndicatorFunction from "./LoadingIndicator-Function";
 
 function CatsFunction() {
-  const initialState = {
-    currentPage: 1,
-    breeds: [],
-    isLoading: false,
-  };
-
-  const [state, setState] = useState(initialState);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [breeds, setBreeds] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setState({
-      ...state,
-      isLoading: true,
+    setIsLoading(false);
+    getBreeds().then((res) => {
+      setIsLoading(false);
+      setBreeds(res);
     });
-    breeds().then((res) => {
-      setState({
-        ...state,
-        breeds: res,
-        isLoading: false,
-      });
-    });
-  }, [state.currentPage]);
+  }, [currentPage]);
 
-  const breeds = useCallback(async () => {
-    const result = await getCatBreeds(state.currentPage);
+  const getBreeds = useCallback(async () => {
+    const result = await getCatBreeds(currentPage);
+
     return result;
-  }, [state.currentPage]);
+  }, [currentPage]);
 
   const handlePreviousPage = useCallback(() => {
-    if (state.currentPage <= 1) {
+    if (currentPage <= 1) {
       return;
     }
-
-    setState({
-      ...state,
-      currentPage: state.currentPage - 1,
-    });
-  }, [state.currentPage]);
+    setCurrentPage((prev) => prev - 1);
+  }, [currentPage]);
 
   const handleNextPage = useCallback(() => {
-    setState({
-      ...state,
-      currentPage: state.currentPage + 1,
-    });
-  }, [state.currentPage]);
+    if (!breeds) return;
+    setCurrentPage((prev) => prev + 1);
+  }, [currentPage]);
 
   return (
     <div className="Cats">
-      <p>현재 페이지: {state.currentPage}</p>
+      <p>현재 페이지: {currentPage}</p>
       <HeaderButtonGroupFunction
         onPreviousPage={handlePreviousPage}
         onNextPage={handleNextPage}
       />
-      <LoadingIndicatorFunction isLoading={state.isLoading} />
+      <LoadingIndicatorFunction isLoading={isLoading} />
       <ul>
-        {state.breeds.map((breed, index) => (
+        {breeds.map((breed, index) => (
           <li className="Cat" key={`${breed.id}-${index}`}>
             <span>Name: {breed.name}</span>
             <span>Origin: {breed.origin}</span>
