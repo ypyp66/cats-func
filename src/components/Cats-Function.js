@@ -19,7 +19,6 @@ function CatsFunction() {
 
   const getBreeds = useCallback(async () => {
     const result = await getCatBreeds(currentPage);
-
     return result;
   }, [currentPage]);
 
@@ -31,9 +30,9 @@ function CatsFunction() {
   }, [currentPage]);
 
   const handleNextPage = useCallback(() => {
-    if (!breeds) return;
-    setCurrentPage((prev) => prev + 1);
-  }, [currentPage]);
+    if (!breeds.length) return;
+    else setCurrentPage((prev) => prev + 1);
+  }, [breeds]);
 
   return (
     <div className="Cats">

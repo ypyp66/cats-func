@@ -21,7 +21,6 @@ export const getCatBreeds = async (currentPage, limit = 5) => {
     }
   );
   const breeds = await response.json();
-  console.log(breeds);
 
   return breeds;
 };
